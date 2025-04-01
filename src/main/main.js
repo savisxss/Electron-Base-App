@@ -2,8 +2,22 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
-// Keep a global reference of the window object to prevent it from being garbage collected
+// Import node-threading components
+// These will be pulled from the GitHub repository
+let MainApplication, MemoryMonitor, Logger;
+try {
+  MainApplication = require('./node-threading/index.js');
+  MemoryMonitor = require('./node-threading/MemoryMonitor');
+  Logger = require('./node-threading/Logger');
+  console.log('Successfully loaded node-threading modules');
+} catch (error) {
+  console.error('Error loading node-threading modules:', error.message);
+  console.error('Please make sure you have cloned the node-threading repository into the src/main directory');
+}
+
+// Keep a global reference of the window object and threading system
 let mainWindow;
+let threadingSystem;
 
 // Development mode flag
 const isDev = process.argv.includes('--dev');
@@ -29,6 +43,24 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   }
 
+  // Initialize threading system if available
+  if (MainApplication) {
+    threadingSystem = new MainApplication();
+    console.log('Threading system initialized');
+    
+    // Set up periodic updates of memory stats
+    setInterval(async () => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        try {
+          const stats = getMemoryStats();
+          mainWindow.webContents.send('memory-stats-update', stats);
+        } catch (error) {
+          console.error('Error sending memory stats:', error);
+        }
+      }
+    }, 2000);
+  }
+
   // Emitted when the window is closed
   mainWindow.on('closed', () => {
     // Dereference the window object
@@ -37,7 +69,6 @@ function createWindow() {
 }
 
 // This method will be called when Electron has finished initialization
-// and is ready to create browser windows
 app.whenReady().then(() => {
   createWindow();
 
@@ -49,11 +80,53 @@ app.whenReady().then(() => {
 });
 
 // Quit when all windows are closed, except on macOS
-app.on('window-all-closed', () => {
+app.on('window-all-closed', async () => {
+  // Shutdown threading system if it was initialized
+  if (threadingSystem && typeof threadingSystem.shutdown === 'function') {
+    try {
+      await threadingSystem.shutdown();
+      console.log('Threading system shutdown successfully');
+    } catch (error) {
+      console.error('Error shutting down threading system:', error);
+    }
+  }
+
   if (process.platform !== 'darwin') app.quit();
 });
 
-// IPC Handlers (Inter-Process Communication)
+// IPC Handlers
+
+// Get memory stats from the threading system
+function getMemoryStats() {
+  if (!MemoryMonitor) {
+    return { error: 'Memory monitor not available' };
+  }
+  
+  try {
+    const stats = [];
+    for (let i = 1; i <= 8; i++) {
+      const report = MemoryMonitor.generateReport(i);
+      if (report) {
+        stats.push(report);
+      }
+    }
+    return { success: true, stats };
+  } catch (error) {
+    console.error('Error generating memory stats:', error);
+    return { error: error.message };
+  }
+}
+
+// Process data using the threading system
+async function processDataWithThreads(data) {
+  if (!threadingSystem) {
+    throw new Error('Threading system not initialized');
+  }
+
+  // Here we simulate distributing work to the worker threads
+  // In a real implementation, you would modify NodeFragment.js to handle your specific processing needs
+  return await threadingSystem.sayHello();
+}
 
 // Example: Open file dialog
 ipcMain.handle('open-file-dialog', async () => {
@@ -91,6 +164,21 @@ ipcMain.handle('write-file', async (event, { filePath, content }) => {
   } catch (error) {
     console.error('Error writing file:', error);
     throw new Error(`Error writing file: ${error.message}`);
+  }
+});
+
+// Threading specific handlers
+ipcMain.handle('get-memory-stats', async () => {
+  return getMemoryStats();
+});
+
+ipcMain.handle('process-data', async (event, data) => {
+  try {
+    const result = await processDataWithThreads(data);
+    return { success: true, result };
+  } catch (error) {
+    console.error('Error processing data:', error);
+    return { success: false, error: error.message };
   }
 });
 

@@ -16,14 +16,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // App info
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   
-  // Subscribe to events
-  onUpdateAvailable: (callback) => {
+  // Threading specific APIs
+  getMemoryStats: () => ipcRenderer.invoke('get-memory-stats'),
+  processData: (data) => ipcRenderer.invoke('process-data', data),
+  
+  // Subscribe to memory stats updates
+  onMemoryStatsUpdate: (callback) => {
     const subscription = (_event, value) => callback(value);
-    ipcRenderer.on('update-available', subscription);
+    ipcRenderer.on('memory-stats-update', subscription);
     
     // Return a function to unsubscribe
     return () => {
-      ipcRenderer.removeListener('update-available', subscription);
+      ipcRenderer.removeListener('memory-stats-update', subscription);
     };
   }
 });

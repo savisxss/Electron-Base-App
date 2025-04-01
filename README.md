@@ -1,10 +1,12 @@
-# Electron Base App
+# Electron Base App with Node Threading
 
-A comprehensive template for building Windows desktop applications using Electron and JavaScript.
+A comprehensive template for building Windows desktop applications using Electron and JavaScript, enhanced with powerful multithreading capabilities from the node-threading system.
 
 ## Features
 
 - 🚀 Quick Start - Ready-to-use project configuration
+- 🧵 Multithreading - Efficient handling of multiple Node.js worker threads
+- 📊 Memory Monitoring - Real-time memory stats and optimization
 - 📁 File Operations - Read, write and manage files
 - 🎨 Modern UI - Clean and responsive design
 - 🔒 Secure Architecture - Context isolation and secure IPC
@@ -19,6 +21,7 @@ electron-base-app/
 │   ├── main/                     # Backend (main process)
 │   │   ├── main.js               # Main Node.js file
 │   │   ├── preload.js            # Preload script
+│   │   └── node-threading/       # Node threading system (to be cloned)
 │   └── renderer/                 # Frontend (renderer process)
 │       ├── index.html            # Main HTML file
 │       ├── index.js              # Frontend JavaScript
@@ -32,18 +35,24 @@ electron-base-app/
 
 - [Node.js](https://nodejs.org/) (v16+)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- [Git](https://git-scm.com/) (for cloning the node-threading repository)
 
 ## Getting Started
 
 ### Installation
 
-1. Clone the repository:
+1. Clone the Electron Base App repository:
    ```bash
    git clone https://github.com/savisxss/Electron-Base-App.git
    cd Electron-Base-App
    ```
 
-2. Install dependencies:
+2. Clone the node-threading repository into the src/main directory:
+   ```bash
+   git clone https://github.com/savisxss/node-threading.git src/main/node-threading
+   ```
+
+3. Install dependencies:
    ```bash
    npm install
    ```
@@ -68,6 +77,70 @@ npm run build
 ```
 
 The built application will be available in the `dist` directory.
+
+## Node Threading Integration
+
+This application integrates with the [node-threading](https://github.com/savisxss/node-threading) system to provide powerful multithreading capabilities for your desktop applications.
+
+### Key Features from node-threading
+
+- **Worker Threads Management**: Efficient handling of multiple Node.js worker threads
+- **Virtual Memory System**: 8 managed memory stacks with automatic optimization
+- **Smart Caching**: Virtual cache system with socket-based communication
+- **Queue Buffer System**: Efficient data queueing and processing
+- **Real-time Monitoring**: Advanced memory and performance monitoring
+- **Colored Logging**: Comprehensive logging system with color-coded output
+- **Health Checks**: Automatic system health monitoring and reporting
+
+### Use Cases
+
+The threading system is perfect for:
+
+- **Data Processing Applications**: Analyze large datasets in the background
+- **Media Processing Tools**: Handle image/video processing in separate threads
+- **Scientific Applications**: Run complex calculations without blocking the UI
+- **Monitoring Dashboards**: Collect and visualize real-time system metrics
+- **Financial Applications**: Process large financial datasets and calculations
+- **Development Tools**: Code compilation and static analysis
+
+### Customizing Node Fragments
+
+To use the threading system for your specific needs, modify the `NodeFragment.js` file in the node-threading directory. Here's an example of a custom processing function:
+
+```javascript
+// In NodeFragment.js
+function fragmentEvaluate(fragmentId, data) {
+    // Replace with your own processing logic
+    switch (fragmentId) {
+        case 1:
+            return processImages(data);
+        case 2:
+            return analyzeData(data);
+        case 3:
+            return generateReport(data);
+        case 4:
+            return optimizeResults(data);
+        default:
+            throw new Error(`Invalid fragment ID: ${fragmentId}`);
+    }
+}
+
+function processImages(data) {
+    // Your image processing logic here
+}
+
+function analyzeData(data) {
+    // Your data analysis logic here
+}
+
+function generateReport(data) {
+    // Your report generation logic here
+}
+
+function optimizeResults(data) {
+    // Your optimization logic here
+}
+```
 
 ## Customizing the Application
 
@@ -101,6 +174,7 @@ npm install --save package-name
 
 The main process (in `src/main/main.js`) is responsible for:
 - Creating and managing application windows
+- Initializing and controlling the threading system
 - Accessing native OS features
 - File system operations
 - Inter-process communication (IPC)
@@ -111,6 +185,7 @@ The renderer process (in `src/renderer/`) is responsible for:
 - User interface
 - DOM manipulation
 - Handling user input
+- Displaying threading system statistics
 - Communicating with the main process via IPC
 
 ### Preload Script
@@ -122,39 +197,39 @@ The preload script (in `src/main/preload.js`) provides:
 
 ## IPC Communication
 
-### From Renderer to Main
+### Threading System Examples
 
 ```javascript
-// In preload.js
-contextBridge.exposeInMainWorld('electronAPI', {
-  readFile: (filePath) => ipcRenderer.invoke('read-file', filePath)
+// In main.js (main process)
+ipcMain.handle('process-data', async (event, data) => {
+  const result = await processDataWithThreads(data);
+  return { success: true, result };
 });
 
-// In main.js
-ipcMain.handle('read-file', async (event, filePath) => {
-  // Implementation
+// In renderer (through preload.js)
+const result = await window.electronAPI.processData({
+  data: 'Test data',
+  timestamp: Date.now()
 });
-
-// In renderer
-const fileContent = await window.electronAPI.readFile(filePath);
 ```
 
-### From Main to Renderer
+### Memory Stats Examples
 
 ```javascript
-// In main.js
-mainWindow.webContents.send('update-available', { version: '1.1.0' });
-
-// In preload.js
-contextBridge.exposeInMainWorld('electronAPI', {
-  onUpdateAvailable: (callback) => {
-    ipcRenderer.on('update-available', (_event, value) => callback(value));
+// In main.js (main process)
+function getMemoryStats() {
+  const stats = [];
+  for (let i = 1; i <= 8; i++) {
+    const report = MemoryMonitor.generateReport(i);
+    if (report) stats.push(report);
   }
-});
+  return { success: true, stats };
+}
 
-// In renderer
-window.electronAPI.onUpdateAvailable((updateInfo) => {
-  console.log('Update available:', updateInfo);
+// In renderer (through preload.js)
+window.electronAPI.onMemoryStatsUpdate(data => {
+  // Update UI with memory stats
+  updateMemoryStatsUI(data);
 });
 ```
 

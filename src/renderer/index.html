@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Electron Base App</title>
+  <title>Electron Base App with Node Threading</title>
   <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
   <div class="app-container">
     <!-- Custom title bar -->
     <div class="titlebar">
-      <div class="titlebar-text">Electron Base App</div>
+      <div class="titlebar-text">Electron Base App with Node Threading</div>
       <div class="titlebar-controls">
         <button id="minimize-btn" class="titlebar-button">&#x2212;</button>
         <button id="maximize-btn" class="titlebar-button">&#x25A1;</button>
@@ -31,6 +31,12 @@
               <a href="#dashboard">
                 <span class="icon">📊</span>
                 <span class="text">Dashboard</span>
+              </a>
+            </li>
+            <li data-view="threading">
+              <a href="#threading">
+                <span class="icon">🧵</span>
+                <span class="text">Threading</span>
               </a>
             </li>
             <li data-view="content">
@@ -66,8 +72,8 @@
           <h1>Dashboard</h1>
           
           <div class="card">
-            <h2>Welcome to Electron Base App!</h2>
-            <p>This template contains everything you need to start building desktop applications with Electron and JavaScript.</p>
+            <h2>Welcome to Electron Base App with Node Threading!</h2>
+            <p>This template contains everything you need to start building desktop applications with Electron and JavaScript, plus powerful multithreading capabilities with node-threading.</p>
             
             <div class="features-grid">
               <div class="feature-item">
@@ -79,18 +85,18 @@
               </div>
               
               <div class="feature-item">
-                <div class="feature-icon">📁</div>
+                <div class="feature-icon">🧵</div>
                 <div class="feature-details">
-                  <h3>File Operations</h3>
-                  <p>Examples of reading and writing files</p>
+                  <h3>Multithreading</h3>
+                  <p>Powerful Node.js worker threads</p>
                 </div>
               </div>
               
               <div class="feature-item">
-                <div class="feature-icon">🎨</div>
+                <div class="feature-icon">📊</div>
                 <div class="feature-details">
-                  <h3>Modern UI</h3>
-                  <p>Clean and responsive design</p>
+                  <h3>Memory Monitoring</h3>
+                  <p>Real-time memory stats and optimization</p>
                 </div>
               </div>
               
@@ -110,6 +116,30 @@
             <div class="button-group">
               <button id="open-file-btn" class="btn primary-btn">Open File</button>
               <button id="show-info-btn" class="btn secondary-btn">Show App Info</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Threading View -->
+        <div id="threading-view" class="view">
+          <h1>Node Threading</h1>
+          
+          <div class="card">
+            <h2>Worker Threads</h2>
+            <p>This application integrates with the node-threading system to provide powerful multithreading capabilities.</p>
+            <div class="button-group">
+              <button id="process-data-btn" class="btn primary-btn">Process Data</button>
+            </div>
+            <div id="process-result-container" class="process-results">
+              <!-- Results will be shown here -->
+            </div>
+          </div>
+          
+          <div class="card">
+            <h2>Memory Stacks Monitoring</h2>
+            <p>Real-time monitoring of node-threading memory stacks:</p>
+            <div id="memory-stats-container" class="memory-stats">
+              <div class="loading-message">Loading memory stats...</div>
             </div>
           </div>
         </div>
@@ -193,9 +223,10 @@
                 <label for="language-select">Language:</label>
                 <select id="language-select">
                   <option value="en">English</option>
-                  <option value="fr">Français</option>
-                  <option value="de">Deutsch</option>
-                  <option value="es">Español</option>
+                  <option value="pl">Polish</option>
+                  <option value="fr">French</option>
+                  <option value="de">German</option>
+                  <option value="es">Spanish</option>
                 </select>
               </div>
             </div>
@@ -208,11 +239,9 @@
           
           <div class="card">
             <h2>About</h2>
-            <p>Electron Base App</p>
+            <p>Electron Base App with Node Threading</p>
             <p>Version: <span id="about-version">1.0.0</span></p>
-            <p>Electron: <span id="electron-version">-</span></p>
-            <p>Chromium: <span id="chromium-version">-</span></p>
-            <p>Node.js: <span id="node-version">-</span></p>
+            <p>Node Threading Integration: Enabled</p>
           </div>
         </div>
       </main>
