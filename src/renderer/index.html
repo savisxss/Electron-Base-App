@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electron Base App</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Custom title bar -->
+    <div class="titlebar">
+      <div class="titlebar-text">Electron Base App</div>
+      <div class="titlebar-controls">
+        <button id="minimize-btn" class="titlebar-button">&#x2212;</button>
+        <button id="maximize-btn" class="titlebar-button">&#x25A1;</button>
+        <button id="close-btn" class="titlebar-button close-button">&#x2715;</button>
+      </div>
+    </div>
+    
+    <div class="content-container">
+      <!-- Sidebar / Menu -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h2>Menu</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <ul>
+            <li data-view="dashboard" class="active">
+              <a href="#dashboard">
+                <span class="icon">📊</span>
+                <span class="text">Dashboard</span>
+              </a>
+            </li>
+            <li data-view="content">
+              <a href="#content">
+                <span class="icon">📝</span>
+                <span class="text">Content</span>
+              </a>
+            </li>
+            <li data-view="files">
+              <a href="#files">
+                <span class="icon">📁</span>
+                <span class="text">Files</span>
+              </a>
+            </li>
+            <li data-view="settings">
+              <a href="#settings">
+                <span class="icon">⚙️</span>
+                <span class="text">Settings</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+          <p id="app-version">v1.0.0</p>
+        </div>
+      </div>
+      
+      <!-- Main content -->
+      <main class="main-content">
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view active-view">
+          <h1>Dashboard</h1>
+          
+          <div class="card">
+            <h2>Welcome to Electron Base App!</h2>
+            <p>This template contains everything you need to start building desktop applications with Electron and JavaScript.</p>
+            
+            <div class="features-grid">
+              <div class="feature-item">
+                <div class="feature-icon">🚀</div>
+                <div class="feature-details">
+                  <h3>Quick Start</h3>
+                  <p>Ready-to-use project configuration</p>
+                </div>
+              </div>
+              
+              <div class="feature-item">
+                <div class="feature-icon">📁</div>
+                <div class="feature-details">
+                  <h3>File Operations</h3>
+                  <p>Examples of reading and writing files</p>
+                </div>
+              </div>
+              
+              <div class="feature-item">
+                <div class="feature-icon">🎨</div>
+                <div class="feature-details">
+                  <h3>Modern UI</h3>
+                  <p>Clean and responsive design</p>
+                </div>
+              </div>
+              
+              <div class="feature-item">
+                <div class="feature-icon">🔒</div>
+                <div class="feature-details">
+                  <h3>Secure Architecture</h3>
+                  <p>Context isolation and secure IPC</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h2>Getting Started</h2>
+            <p>Check the <code>README.md</code> file and code documentation to learn more.</p>
+            <div class="button-group">
+              <button id="open-file-btn" class="btn primary-btn">Open File</button>
+              <button id="show-info-btn" class="btn secondary-btn">Show App Info</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Content View -->
+        <div id="content-view" class="view">
+          <h1>Content</h1>
+          
+          <div class="card">
+            <h2>Your Content</h2>
+            <p>This section can be customized for your specific application content.</p>
+            <div class="content-area">
+              <textarea id="content-editor" placeholder="Type your content here..."></textarea>
+              <div class="content-controls">
+                <button id="save-content-btn" class="btn primary-btn">Save</button>
+                <button id="clear-content-btn" class="btn secondary-btn">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Files View -->
+        <div id="files-view" class="view">
+          <h1>Files</h1>
+          
+          <div class="card">
+            <h2>File Manager</h2>
+            <p>Manage application files and open files from your system.</p>
+            
+            <div class="button-group">
+              <button id="file-open-btn" class="btn primary-btn">Open File</button>
+              <button id="file-save-btn" class="btn secondary-btn">Save to File</button>
+            </div>
+            
+            <div class="file-content-wrapper">
+              <textarea id="file-content" placeholder="File content will appear here..."></textarea>
+              <div id="file-path" class="file-path">No file selected</div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h2>Recent Files</h2>
+            <div id="recent-files-list" class="files-list">
+              <div class="no-files-message">No recent files.</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Settings View -->
+        <div id="settings-view" class="view">
+          <h1>Settings</h1>
+          
+          <div class="card">
+            <h2>Application Settings</h2>
+            
+            <div class="settings-form">
+              <div class="setting-item">
+                <label for="theme-select">Theme:</label>
+                <select id="theme-select">
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                  <option value="system">System</option>
+                </select>
+              </div>
+              
+              <div class="setting-item">
+                <label>
+                  <input type="checkbox" id="start-with-windows" />
+                  Start with Windows
+                </label>
+              </div>
+              
+              <div class="setting-item">
+                <label>
+                  <input type="checkbox" id="auto-update" checked />
+                  Check for updates automatically
+                </label>
+              </div>
+              
+              <div class="setting-item">
+                <label for="language-select">Language:</label>
+                <select id="language-select">
+                  <option value="en">English</option>
+                  <option value="fr">Français</option>
+                  <option value="de">Deutsch</option>
+                  <option value="es">Español</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="button-group">
+              <button id="save-settings-btn" class="btn primary-btn">Save Settings</button>
+              <button id="reset-settings-btn" class="btn secondary-btn">Reset to Default</button>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h2>About</h2>
+            <p>Electron Base App</p>
+            <p>Version: <span id="about-version">1.0.0</span></p>
+            <p>Electron: <span id="electron-version">-</span></p>
+            <p>Chromium: <span id="chromium-version">-</span></p>
+            <p>Node.js: <span id="node-version">-</span></p>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  
+  <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
+  
+  <script src="index.js"></script>
+</body>
+</html>
