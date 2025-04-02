@@ -7,13 +7,17 @@
     "start": "electron .",
     "dev": "electron . --dev",
     "build": "electron-builder",
+    "build:secure": "npm run build && node electron-secure-packer.js",
+    "obfuscate": "node js-vm-obfuscator.js",
     "postinstall": "electron-builder install-app-deps"
   },
   "author": "savis",
   "license": "MIT",
   "devDependencies": {
+    "acorn": "^8.10.0",
     "electron": "^25.3.1",
-    "electron-builder": "^24.4.0"
+    "electron-builder": "^24.4.0",
+    "escodegen": "^2.1.0"
   },
   "dependencies": {
     "electron-store": "^8.1.0"
